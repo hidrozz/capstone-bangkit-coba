@@ -1,6 +1,6 @@
 // config/firebaseConfig.js
 const admin = require('firebase-admin');
-const serviceAccount = require('../serviceAccountKey.json'); // Sesuaikan dengan lokasi file Anda
+const serviceAccount = require('../credentials/serviceAccountKey.json'); // Sesuaikan dengan lokasi file Anda
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
