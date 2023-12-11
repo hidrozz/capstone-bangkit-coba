@@ -1,4 +1,3 @@
-// const { Firestore } = require('@google-cloud/firestore');
 const { admin, firestore } = require('../../config/firebaseConfig')
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -29,7 +28,6 @@ class ArticlesService {
   }
 
   async getArticleById(document) {
-    // const doc = await this.collectionRef.doc(document).get();
     const querySnapshot = await this.collectionRef.where('id', '==', document).get();
     var artikel = [];
     if (querySnapshot.empty) {
@@ -56,7 +54,6 @@ class ArticlesService {
       };
 
       const documentRef = this.collectionRef.doc();
-      // Tambahkan data ke dokumen
       documentRef.set(article)
         .then(() => {
           console.log('Berhasil menambahkan artikel');
@@ -69,7 +66,6 @@ class ArticlesService {
   }
 
   async deleteArticleById(article) {
-    // Menghapus seluruh koleksi dan dokumennya
     this.collectionRef.listDocuments().then((documents) => {
       const deletePromises = documents.map((document) => document.delete());
       return Promise.all(deletePromises);
@@ -81,7 +77,6 @@ class ArticlesService {
   }
 
   async deleteAllArticles() {
-    // Menghapus seluruh koleksi dan dokumennya
     this.collectionRef.listDocuments().then((documents) => {
       const deletePromises = documents.map((document) => document.delete());
       return Promise.all(deletePromises);
@@ -91,7 +86,21 @@ class ArticlesService {
       console.error('Gagal menghapus koleksi dan dokumennya:', error);
     });
   }
+  async searchArticles(keyword) {
+    const querySnapshot = await this.collectionRef.get();
+    const articles = [];
+    const newArticles = [];
+    querySnapshot.forEach((doc) => {
+      articles.push(doc.data());
+    });
 
+    articles.forEach((article) => {
+      const filteredData = [article].filter(item => item.content.includes(keyword));
+      if(filteredData.length !== 0) newArticles.push(filteredData);
+    });
+    console.log(newArticles);
+    return newArticles;
+  }
 }
 
 module.exports = ArticlesService;

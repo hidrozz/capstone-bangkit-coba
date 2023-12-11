@@ -1,4 +1,3 @@
-// const { Firestore } = require('@google-cloud/firestore');
 const { admin, firestore } = require('../../config/firebaseConfig')
 const { nanoid } = require('nanoid');
 const NotFoundError = require('../../exceptions/NotFoundError');
@@ -29,7 +28,6 @@ class BatikService {
   }
 
   async getBatikById(document) {
-    // const doc = await this.collectionRef.doc(document).get();
     const querySnapshot = await this.collectionRef.where('id', '==', document).get();
     var artikel = [];
     if (querySnapshot.empty) {
@@ -54,7 +52,6 @@ class BatikService {
     };
 
     const documentRef = this.collectionRef.doc();
-    // Tambahkan data ke dokumen
     documentRef.set(article)
       .then(() => {
         console.log('Berhasil menambahkan baik');
@@ -67,7 +64,6 @@ class BatikService {
   }
 
   async deleteBatikById(article) {
-    // Menghapus seluruh koleksi dan dokumennya
     this.collectionRef.listDocuments().then((documents) => {
       const deletePromises = documents.map((document) => document.delete());
       return Promise.all(deletePromises);
@@ -79,7 +75,6 @@ class BatikService {
   }
 
   async deleteAllBatik() {
-    // Menghapus seluruh koleksi dan dokumennya
     this.collectionRef.listDocuments().then((documents) => {
       const deletePromises = documents.map((document) => document.delete());
       return Promise.all(deletePromises);
@@ -89,7 +84,44 @@ class BatikService {
       console.error('Gagal menghapus koleksi dan dokumennya:', error);
     });
   }
+  async searchBatik(keyword) {
+   
+    const querySnapshot = await this.collectionRef.get();
+    const batikList = [];
+    const newBatik = [];
+    querySnapshot.forEach((doc) => {
+      console.log(doc.data());
+      batikList.push(doc.data());
+    });
+    
+    
 
+    batikList.forEach((batik) => {
+      const filteredData = [batik].filter(item => item && item.content && item.content.includes(keyword));
+      if(filteredData.length !== 0) newBatik.push(filteredData);
+    });
+    console.log(newBatik);
+
+    
+    return batikList;
+  
+  // async searchBatik(keyword) {
+  //   const querySnapshot = await this.collectionRef.get();
+  //   const batikList = [];
+
+  //   querySnapshot.forEach((doc) => {
+  //       batikList.push(doc.data());
+  //   });
+
+  //   const filteredData = [batik].filter(item => item && item.content && item.content.includes(keyword));
+  //   if(filteredData.length !== 0) newBatik.push(filteredData);
+  //   const result = [[filteredBatikList]];  // Wrap the filtered list in an additional array
+
+  //   console.log(result);
+  //   return result;
+
+
+  }
 }
 
 module.exports = BatikService;

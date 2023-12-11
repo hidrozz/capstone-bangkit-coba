@@ -17,12 +17,13 @@ const storage = multer.diskStorage({
 
 const upload = multer();
 const app = express();
+const searchRoutes = require('./router/searchRouter');
 app.use(bodyParser.json());
 app.use(upload.array());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-
+app.use(searchRoutes);
 app.use('/auth', authRouter); // Mount the auth router at /auth
 app.use('/', articleRouter); // Mount the auth router at /auth
 app.use('/', batikRouter); // Mount the auth router at /auth
